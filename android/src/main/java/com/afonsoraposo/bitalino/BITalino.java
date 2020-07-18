@@ -39,7 +39,8 @@ final class BITalino implements MethodChannel.MethodCallHandler {
     private final MethodChannel methodChannel;
     private final EventChannel dataStreamChannel;
     private BITalinoCommunication bitalinoCommunication;
-    private Result batteryResult;
+    private Result descriptionResult;
+    private Result stateResult;
     private Result connectResult;
     private Result disconnectResult;
     private Result startResult;
@@ -56,54 +57,86 @@ final class BITalino implements MethodChannel.MethodCallHandler {
     }
 
     private final BroadcastReceiver updateReceiver = new BroadcastReceiver() {  @Override
-    public void onReceive(Context context, Intent intent) {
-        final String action = intent.getAction();
-        if (Constants.ACTION_STATE_CHANGED.equals(action)) {
-            String identifier = intent.getStringExtra(Constants.IDENTIFIER);
-            Constants.States state = Constants.States.getStates(intent.getIntExtra(Constants.EXTRA_STATE_CHANGED,0));
-            Log.i(TAG, "Device " + identifier + ": " + state.name());
-            switch (state.name()){
-                case "CONNECTED":
-                    if(connectResult!=null){
-                        connectResult.success(true);
-                        connectResult = null;
-                    }
-                    break;
-                case "DISCONNECTED":
-                    if(disconnectResult!=null){
-                        disconnectResult.success(true);
-                        disconnectResult = null;
-                    }else{
-                        // TODO: update flutter side, connection lost
-                    }
-                    break;
-                case "ACQUISITION_OK":
-                    if(startResult!=null){
-                        startResult.success(true);
-                        startResult = null;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        } else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
-            BITalinoFrame frame = intent.getParcelableExtra(Constants.EXTRA_DATA);
-            Log.d(TAG, "BITalinoFrame: " + frame.toString());
-        } else if (Constants.ACTION_COMMAND_REPLY.equals(action)) {
-            String identifier = intent.getStringExtra(Constants.IDENTIFIER);
-            Parcelable parcelable = intent.getParcelableExtra(Constants.EXTRA_COMMAND_REPLY);
-            if(parcelable.getClass().equals(BITalinoState.class)){
-                Log.d(TAG, "BITalinoState: " + parcelable.toString());
-                if(batteryResult!=null){
-                    batteryResult.success(((BITalinoState) parcelable).getBattery());
-                    batteryResult = null;
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (Constants.ACTION_STATE_CHANGED.equals(action)) {
+                String identifier = intent.getStringExtra(Constants.IDENTIFIER);
+                Constants.States state = Constants.States.getStates(intent.getIntExtra(Constants.EXTRA_STATE_CHANGED,0));
+                //Log.i(TAG, "Device " + identifier + ": " + state.name());
+                switch (state.name()){
+                    case "CONNECTED":
+                        if(connectResult!=null){
+                            connectResult.success(true);
+                            connectResult = null;
+                        }
+                        if(stopResult!=null){
+                            stopResult.success(true);
+                            stopResult=null;
+                        }
+                        break;
+                    case "DISCONNECTED":
+                        if(disconnectResult!=null){
+                            disconnectResult.success(true);
+                            disconnectResult = null;
+                        }else{
+                            if(connectResult!=null){
+                                connectResult.success(false);
+                            }else{
+                                methodChannel.invokeMethod("lostConnection", null);
+                            }
+                        }
+                        break;
+                    case "ACQUISITION_OK":
+                        if(startResult!=null){
+                            startResult.success(true);
+                            startResult = null;
+                        }
+                        break;
+                    default:
+                        break;
                 }
-            } else if(parcelable.getClass().equals(BITalinoDescription.class)){
-                Log.d(TAG, "BITalinoDescription: isBITalino2: " + ((BITalinoDescription)parcelable).isBITalino2() +  "; FwVersion: " + ((BITalinoDescription)parcelable).getFwVersion());
+            } else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
+                BITalinoFrame frame = intent.getParcelableExtra(Constants.EXTRA_DATA);
+                //Log.d(TAG, "BITalinoFrame: " + frame.toString());
+            } else if (Constants.ACTION_COMMAND_REPLY.equals(action)) {
+                String identifier = intent.getStringExtra(Constants.IDENTIFIER);
+                Parcelable parcelable = intent.getParcelableExtra(Constants.EXTRA_COMMAND_REPLY);
+                if(parcelable.getClass().equals(BITalinoState.class)){
+                    //Log.d(TAG, "BITalinoState: " + parcelable.toString());
+                    if(stateResult!=null){
+                        BITalinoState state = ((BITalinoState) parcelable);
+                        int[] analog = new int[6];
+                        int[] digital = new int[4];
+                        // for some reason the channels' values come inverted
+                        for(int i = 0; i<analog.length; i++){
+                            analog[i] = state.getAnalog(analog.length-1-i);
+                        }
+                        for(int i = 0; i<digital.length; i++){
+                            digital[i] = state.getDigital(digital.length-1-i);
+                        }
+                        final Map<String, Object> dataBuffer = new HashMap<>();
+                        dataBuffer.put("identifier", state.getIdentifier());
+                        dataBuffer.put("battery", state.getBattery());
+                        dataBuffer.put("batteryThreshold", state.getBatThreshold());
+                        dataBuffer.put("analog", analog);
+                        dataBuffer.put("digital", digital);
+                        stateResult.success(dataBuffer);
+                        stateResult = null;
+                    }
+                } else if(parcelable.getClass().equals(BITalinoDescription.class)){
+                    //Log.d(TAG,  "BITalinoDescription: isBITalino2: " + ((BITalinoDescription)parcelable).isBITalino2() +  "; FwVersion: " + ((BITalinoDescription)parcelable).getFwVersion());
+                    if(descriptionResult!=null){
+                        BITalinoDescription description = (BITalinoDescription)parcelable;
+                        final Map<String, Object> dataBuffer = new HashMap<>();
+                        dataBuffer.put("isBITalino2", description.isBITalino2());
+                        dataBuffer.put("fwVersion", ""+description.getFwVersion());
+                        descriptionResult.success(dataBuffer);
+                        descriptionResult = null;
+                    }
+                }
+            } else if (Constants.ACTION_MESSAGE_SCAN.equals(action)){
+                BluetoothDevice device = intent.getParcelableExtra(Constants.EXTRA_DEVICE_SCAN);
             }
-        } else if (Constants.ACTION_MESSAGE_SCAN.equals(action)){
-            BluetoothDevice device = intent.getParcelableExtra(Constants.EXTRA_DEVICE_SCAN);
-        }
         }
     };
 
@@ -184,23 +217,33 @@ final class BITalino implements MethodChannel.MethodCallHandler {
                     result.error("BITalinoCommunication",e.getMessage(), null);
                 }
                 break;
-            case "version":
+            case "description":
                 try {
+                    descriptionResult = result;
                     bitalinoCommunication.getVersion();
-                    result.success(true);
                 } catch (BITalinoException e) {
+                    descriptionResult = null;
                     e.printStackTrace();
                     result.error("BITalinoCommunication",e.getMessage(), null);
                 }
                 break;
-            case "battery":
+            case "state":
                 try {
-                    batteryResult = result;
+                    stateResult = result;
                     if(!bitalinoCommunication.state()){
-                        throw new BITalinoException(BITalinoErrorTypes.BT_DEVICE_NOT_CONNECTED);
+                        throw new BITalinoException(BITalinoErrorTypes.UNDEFINED);
                     }
                 } catch (BITalinoException e) {
-                    batteryResult = null;
+                    stateResult = null;
+                    e.printStackTrace();
+                    result.error("BITalinoCommunication", e.getMessage(), null);
+                }
+                break;
+            case "batteryThreshold":
+                try{
+                    final int threshold = call.argument("threshold");
+                    result.success(bitalinoCommunication.battery(threshold));
+                } catch (BITalinoException e) {
                     e.printStackTrace();
                     result.error("BITalinoCommunication", e.getMessage(), null);
                 }
@@ -211,7 +254,8 @@ final class BITalino implements MethodChannel.MethodCallHandler {
                     final int sampleRate = call.argument("sampleRate");
                     startResult = result;
                     if(!bitalinoCommunication.start(convertIntegers(channels), sampleRate)){
-                        throw new BITalinoException(BITalinoErrorTypes.UNDEFINED);
+                        startResult=null;
+                        result.success(false);
                     }
                 } catch (BITalinoException e) {
                     startResult = null;
@@ -222,12 +266,30 @@ final class BITalino implements MethodChannel.MethodCallHandler {
             case "stop":
                 try{
                     stopResult = result;
-                    if(bitalinoCommunication.stop()){ // for some reason, the code returns false if sent successfully
-                        throw new BITalinoException(BITalinoErrorTypes.UNDEFINED);
+                    if(bitalinoCommunication.stop()) { // for some reason, the code returns false if sent successfully
+                        stopResult = null;
+                        result.success(false);
                     }
-                    result.success(true);
                 }catch(BITalinoException e) {
                     stopResult = null;
+                    e.printStackTrace();
+                    result.error("BITalinoCommunication", e.getMessage(), null);
+                }
+                break;
+            case "trigger":
+                try{
+                    final ArrayList<Integer> channels = call.argument("digitalChannels");
+                    result.success(bitalinoCommunication.trigger(convertIntegers(channels)));
+                } catch (BITalinoException e) {
+                    e.printStackTrace();
+                    result.error("BITalinoCommunication", e.getMessage(), null);
+                }
+                break;
+            case "pwm":
+                try{
+                    final int pwmOutput = call.argument("pwmOutput");
+                    result.success(bitalinoCommunication.pwm(pwmOutput));
+                } catch (BITalinoException e) {
                     e.printStackTrace();
                     result.error("BITalinoCommunication", e.getMessage(), null);
                 }
@@ -252,7 +314,7 @@ final class BITalino implements MethodChannel.MethodCallHandler {
 
           @Override
           public void onCancel(Object o) {
-            // TODO ?
+              cancelDataStreamSink();
           }
         });
     }

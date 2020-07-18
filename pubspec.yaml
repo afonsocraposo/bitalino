@@ -30,8 +30,8 @@ flutter:
       android:
         package: com.afonsoraposo.bitalino
         pluginClass: BitalinoPlugin
-      ios:
-        pluginClass: BitalinoPlugin
+      #ios:
+        #pluginClass: BitalinoPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
