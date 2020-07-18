@@ -119,10 +119,10 @@ class BITalinoController {
   ///
   /// [CommunicationType.BLE] might not be working.
   ///
-  /// Returns [BITalinoException(BITalinoErrorType.BLE_NOT_IMPLEMENT_ONDATA)] if the [OnBITalinoDataAvailable] callback is provided with [CommunicationType.BLE].
+  /// Returns [BITalinoException(BITalinoErrorType.BLE\_NOT\_IMPLEMENT\_ONDATA)] if the [OnBITalinoDataAvailable] callback is provided with [CommunicationType.BLE].
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.CONTROLLER_FAILED_INITIALIZE)] if the controller failed to initialize.
-  /// Returns [BITalinoException(BITalinoErrorType.CONTROLLER_ALREADY_INITIALIZED)] if the controller was already initialize before.
+  /// Returns [BITalinoException(BITalinoErrorType.CONTROLLER\_FAILED\_INITIALIZE)] if the controller failed to initialize.
+  /// Returns [BITalinoException(BITalinoErrorType.CONTROLLER\_ALREADY\_INITIALIZED)] if the controller was already initialize before.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<void> initialize(communicationType,
       {OnBITalinoDataAvailable onDataAvailable}) async {
@@ -167,11 +167,11 @@ class BITalinoController {
   /// A valid bluetooth device address must be provided.
   /// A [onConnectionLost] callback can also be provided.
   ///
-  /// Returns [BITalinoException(BITalinoErrorType.ADDRESS_NULL)] if the address provided is null.
-  /// Returns [BITalinoException(BITalinoErrorType.ALREADY_CONNECTING)] if a connection attempt is already in progress.
+  /// Returns [BITalinoException(BITalinoErrorType.ADDRESS\_NULL)] if the address provided is null.
+  /// Returns [BITalinoException(BITalinoErrorType.ALREADY\_CONNECTING)] if a connection attempt is already in progress.
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_ALREADY_CONNECTED)] if a device is already connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_CONNECTED)] if a device is not connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_ALREADY\_CONNECTED)] if a device is already connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<bool> connect(String address,
       {OnConnectionLost onConnectionLost}) async {
@@ -223,7 +223,7 @@ class BITalinoController {
   /// Returns the BITalino device firmware.
   ///
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<String> version() async {
     return (await _getDescription()).fwVersion;
@@ -232,7 +232,7 @@ class BITalinoController {
   /// Returns [true] if the connected device is BITalino2, [false] otherwise.
   ///
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<bool> isBitalino2() async {
     return (await _getDescription()).isBitalino2;
@@ -242,7 +242,7 @@ class BITalinoController {
   /// Returns [true] if the device is disconnected successfully, [false] otherwise.
   ///
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<bool> disconnect() async {
     if (connected) {
@@ -296,7 +296,7 @@ class BITalinoController {
   /// - digital           [List<int>]
   ///
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<BITalinoState> state() async {
     if (connected) {
@@ -317,7 +317,7 @@ class BITalinoController {
   /// Returns [true] if the battery threshold is set successfully, [false] otherwise.
   ///
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<bool> setBatteryThreshold(int threshold) async {
     if (connected) {
@@ -342,10 +342,10 @@ class BITalinoController {
   /// While acquiring, the [OnBITalinoDataAvailable] callback is called.
   ///
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_ALREADY_ACQUIRING)] if the connected bluetooth device is already acquiring.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_BTH)] if [CommunicationType.BTH] is not selected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\\_DEVICE\_ALREADY\_ACQUIRING)] if the connected bluetooth device is already acquiring.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_BTH)] if [CommunicationType.BTH] is not selected.
   Future<bool> start(List<int> analogChannels, Frequency sampleRate) async {
     if (connected) {
       if (communicationType == CommunicationType.BTH) {
@@ -381,9 +381,9 @@ class BITalinoController {
   /// Returns [true] if the acquisition was stopped successfully, [false] otherwise.
   ///
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_ACQUIRING)] if the connected bluetooth device is not acquiring.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_ACQUIRING)] if the connected bluetooth device is not acquiring.
   Future<bool> stop() async {
     if (connected) {
       if (acquiring) {
@@ -407,7 +407,7 @@ class BITalinoController {
   /// An array with the digital channels to enable set as 1, and the digital channels to disable set as 0.
   ///
   /// Returns [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
-  /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
+  /// Returns [BITalinoException(BITalinoErrorType.BT\_DEVICE\_NOT\_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<bool> trigger(List<int> digitalChannels) async {
     if (connected) {
