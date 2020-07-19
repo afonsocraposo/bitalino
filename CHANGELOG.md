@@ -1,3 +1,7 @@
+## 0.0.6
+
+* Android API - fixed problem with GATT server connection.
+
 ## 0.0.5
 
 * Fixed the API documentation.

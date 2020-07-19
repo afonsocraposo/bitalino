@@ -1,6 +1,6 @@
 name: bitalino
 description: A Flutter plugin that integrates the communication with BITalino devices.
-version: 0.0.5
+version: 0.0.6
 homepage: https://afonsoraposo.com
 repository: https://github.com/Afonsocraposo/bitalino
 

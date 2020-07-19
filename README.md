@@ -1,6 +1,6 @@
 # BITalino
 <p>
-  <img src="https://img.shields.io/badge/version-0.0.5-blue.svg" />
+  <img src="https://img.shields.io/badge/version-0.0.6-blue.svg" />
 </p>
 
 Open source Flutter plugin that integrates the communication with BITalino devices.
@@ -94,6 +94,7 @@ Also, **feel free to contribute** to this project! :)
 
 ## Versioning
 
+- v0.0.6 - 19 July 2020
 - v0.0.5 - 19 July 2020
 - v0.0.4 - 19 July 2020
 - v0.0.3 - 18 July 2020
