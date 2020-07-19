@@ -1,3 +1,7 @@
+## 0.0.4
+
+* Fixed the plugin dependencies problems.
+
 ## 0.0.3
 
 * Corrected some plugin information.

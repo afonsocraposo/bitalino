@@ -1,7 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="05267d51-fb6a-42c4-9f07-46383d30bb4d" name="Default Changelist" comment="" />
+    <list default="true" id="025d36ab-c0db-4124-9415-f967162e8ec2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/bitalino.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/bitalino.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/java/com/afonsoraposo/bitalino/BITalino.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/java/com/afonsoraposo/bitalino/BITalino.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/.classpath" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/.project" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/.settings/org.eclipse.buildship.core.prefs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/jar/api.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/proguard-rules.pro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/androidTest/java/info/plux/pluxapi/ApplicationTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/BTHDeviceScan.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/CommandArguments.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/CommandProperties.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/Communication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/ConnectionState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/Constants.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/Device.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalino.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoCRC.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoCommunication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoCommunicationFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoDescription.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoErrorTypes.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoFrame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoFrameDecoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/BITalinoStateDecoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/CommandDecoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/ble/BLECommunication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/ble/DeviceScan.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/ble/PluxGattAttributes.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/bth/BTHCommunication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/bth/BTHDeviceScan.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/java/info/plux/pluxapi/bitalino/bth/OnBITalinoDataAvailable.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/api/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/android/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/example/android/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,7 +73,10 @@
       </state>
     </system>
   </component>
-  <component name="ProjectId" id="1e8JmcBxYsaWdve8e5K2MAwF0AG" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1esoFcUauWGcJtpPrLab1O5d4GB" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -27,9 +84,10 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/development/android" />
     <property name="dart.analysis.tool.window.force.activate" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/android" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RunManager">
@@ -50,11 +108,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="05267d51-fb6a-42c4-9f07-46383d30bb4d" name="Default Changelist" comment="" />
-      <created>1593697447679</created>
+      <changelist id="025d36ab-c0db-4124-9415-f967162e8ec2" name="Default Changelist" comment="" />
+      <created>1595119574529</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1593697447679</updated>
+      <updated>1595119574529</updated>
     </task>
     <servers />
   </component>
@@ -62,13 +120,9 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.md" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="1226" y="323" width="426" height="456" key="FileChooserDialogImpl" timestamp="1594407442393">
+    <state x="743" y="308" width="426" height="456" key="FileChooserDialogImpl" timestamp="1595119805316">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="1226" y="323" width="426" height="456" key="FileChooserDialogImpl/0.0.1920.1080@0.0.1920.1080" timestamp="1594407442393" />
-    <state x="1097" y="183" width="685" height="736" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1593700071457">
-      <screen x="0" y="0" width="1920" height="1080" />
-    </state>
-    <state x="1097" y="183" width="685" height="736" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1080@0.0.1920.1080" timestamp="1593700071457" />
+    <state x="743" y="308" width="426" height="456" key="FileChooserDialogImpl/0.0.1920.1080@0.0.1920.1080" timestamp="1595119805316" />
   </component>
 </project>

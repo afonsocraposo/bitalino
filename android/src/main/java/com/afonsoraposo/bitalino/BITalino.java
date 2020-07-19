@@ -9,14 +9,17 @@ import android.content.IntentFilter;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+
 import info.plux.pluxapi.Communication;
 import info.plux.pluxapi.Constants;
+import info.plux.pluxapi.bitalino.BITalinoCommunication;
 import info.plux.pluxapi.bitalino.BITalinoCommunicationFactory;
 import info.plux.pluxapi.bitalino.BITalinoDescription;
 import info.plux.pluxapi.bitalino.BITalinoErrorTypes;
@@ -24,14 +27,11 @@ import info.plux.pluxapi.bitalino.BITalinoException;
 import info.plux.pluxapi.bitalino.BITalinoFrame;
 import info.plux.pluxapi.bitalino.BITalinoState;
 import info.plux.pluxapi.bitalino.bth.OnBITalinoDataAvailable;
-import io.flutter.Log;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
-import info.plux.pluxapi.bitalino.BITalinoCommunication;
-import static android.content.ContentValues.TAG;
 
 
 final class BITalino implements MethodChannel.MethodCallHandler {
@@ -105,21 +105,12 @@ final class BITalino implements MethodChannel.MethodCallHandler {
                     //Log.d(TAG, "BITalinoState: " + parcelable.toString());
                     if(stateResult!=null){
                         BITalinoState state = ((BITalinoState) parcelable);
-                        int[] analog = new int[6];
-                        int[] digital = new int[4];
-                        // for some reason the channels' values come inverted
-                        for(int i = 0; i<analog.length; i++){
-                            analog[i] = state.getAnalog(analog.length-1-i);
-                        }
-                        for(int i = 0; i<digital.length; i++){
-                            digital[i] = state.getDigital(digital.length-1-i);
-                        }
                         final Map<String, Object> dataBuffer = new HashMap<>();
                         dataBuffer.put("identifier", state.getIdentifier());
                         dataBuffer.put("battery", state.getBattery());
                         dataBuffer.put("batteryThreshold", state.getBatThreshold());
-                        dataBuffer.put("analog", analog);
-                        dataBuffer.put("digital", digital);
+                        dataBuffer.put("analog", state.getAnalogArray());
+                        dataBuffer.put("digital", state.getDigitalArray());
                         stateResult.success(dataBuffer);
                         stateResult = null;
                     }
@@ -266,7 +257,7 @@ final class BITalino implements MethodChannel.MethodCallHandler {
             case "stop":
                 try{
                     stopResult = result;
-                    if(bitalinoCommunication.stop()) { // for some reason, the code returns false if sent successfully
+                    if(!bitalinoCommunication.stop()) { // for some reason, the code returns false if sent successfully
                         stopResult = null;
                         result.success(false);
                     }

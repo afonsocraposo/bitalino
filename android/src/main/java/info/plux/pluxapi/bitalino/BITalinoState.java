@@ -47,6 +47,10 @@ public class BITalinoState implements Parcelable {
         return analog[pos];
     }
 
+    public int[] getAnalogArray() {
+        return analog;
+    }
+
     public void setAnalog(final int pos, final int value) throws IndexOutOfBoundsException {
         this.analog[pos] = value;
     }
@@ -77,6 +81,10 @@ public class BITalinoState implements Parcelable {
 
     public int getDigital(final int pos) {
         return digital[pos];
+    }
+
+    public int[] getDigitalArray() {
+        return digital;
     }
 
     public void setDigital(final int pos, final int value) throws IndexOutOfBoundsException {

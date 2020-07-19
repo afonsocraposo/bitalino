@@ -1,6 +1,6 @@
 # BITalino
 <p>
-  <img src="https://img.shields.io/badge/version-0.0.3-blue.svg" />
+  <img src="https://img.shields.io/badge/version-0.0.4-blue.svg" />
 </p>
 
 Open source Flutter plugin that integrates the communication with BITalino devices.
@@ -14,17 +14,17 @@ Tested with a BITalino2 device with BTH connection. BLE not working currently.
 
 This plugin uses the available native APIs available at https://bitalino.com/en/development/apis.
 
-|Plaftorm       |Supported| Native Repository           |
-|---------------|:-------:|:---------------------------:|
-|Android	|   ✅    |[revolution-android-api](https://github.com/BITalinoWorld/revolution-android-api)         	|
-|IOS	    	|   ❌    | -            		|
+|Plaftorm       |Supported| Native Repository           | Version |
+|:-------------:|:-------:|:---------------------------:|:--:|
+|Android	|   ✅    |[revolution-android-api](https://github.com/BITalinoWorld/revolution-android-api)         	| 0.0.9 |
+|IOS	    	|   ❌    | -            		| - |
 
 I don't possess an IOS device nor Swift knowledge, therefore, I'm not able to implement IOS support at the moment. **Feel free to contribute!**
 You can always contact me for more details regarding this.
 
 ## Examples
 
-### Start controller and connect to device
+### Start controller
 ```dart
 BITalinoController bitalinoController = BITalinoController();
 try {
@@ -39,6 +39,18 @@ try {
 } on PlatformException catch (Exception) {
   print("Initialization failed: ${Exception.message}");
 }
+```
+
+### Connect to device
+Connect to a device by providing its address.
+A callback can be given to be called when the connection is lost.
+```dart
+await bitalinoController.connect(
+  "20:16:07:18:17:02",
+  onConnectionLost: () {
+    print("Connection lost");
+  },
+)
 ```
 
 ### Start acquisition
