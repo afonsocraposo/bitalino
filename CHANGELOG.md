@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Fixed the API documentation.
+
 ## 0.0.4
 
 * Fixed the plugin dependencies problems.
