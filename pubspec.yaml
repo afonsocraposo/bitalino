@@ -1,6 +1,6 @@
 name: bitalino
 description: A Flutter plugin that integrates the communication with BITalino devices.
-version: 0.0.6
+version: 1.0.0
 homepage: https://afonsoraposo.com
 repository: https://github.com/Afonsocraposo/bitalino
 
@@ -30,8 +30,8 @@ flutter:
       android:
         package: com.afonsoraposo.bitalino
         pluginClass: BitalinoPlugin
-      #ios:
-        #pluginClass: BitalinoPlugin
+      ios:
+        pluginClass: BitalinoPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
