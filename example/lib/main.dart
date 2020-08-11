@@ -27,12 +27,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initPlatformState() async {
     try {
-      await bitalinoController.initialize(CommunicationType.BTH,
-          onDataAvailable: (BITalinoFrame frame) {
-        print(
-            "Sequence: ${frame.sequence}, dS: ${frame.sequence - sequence}, analog: ${frame.analog}, digital: ${frame.digital}");
-        sequence = frame.sequence;
-      });
+      await bitalinoController.initialize(
+          CommunicationType.BLE, "20:16:07:18:17:02");
     } on PlatformException catch (Exception) {
       print(Exception.message);
       print("Initialization failed");
@@ -68,7 +64,6 @@ class _MyAppState extends State<MyApp> {
               onPressed: () async {
                 _notify(
                   await bitalinoController.connect(
-                    "20:16:07:18:17:02",
                     onConnectionLost: () {
                       _notify("Connection lost");
                     },
@@ -79,9 +74,9 @@ class _MyAppState extends State<MyApp> {
             ),
             RaisedButton(
               onPressed: () async {
-                _notify(await bitalinoController.version());
+                _notify(await bitalinoController.setBatteryThreshold(10));
               },
-              child: Text("version"),
+              child: Text("battery"),
             ),
             RaisedButton(
               onPressed: () async {

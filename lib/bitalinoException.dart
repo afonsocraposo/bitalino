@@ -18,6 +18,7 @@ enum BITalinoErrorType {
   BT_DEVICE_ALREADY_ACQUIRING,
   BT_DEVICE_NOT_ACQUIRING,
   BT_DEVICE_BTH,
+  NOT_IMPLEMENTED_IOS
 }
 
 class BITalinoException implements Exception {
@@ -72,6 +73,9 @@ class BITalinoException implements Exception {
         return;
       case BITalinoErrorType.BT_DEVICE_BTH:
         msg = "CommunicationType must be BTH";
+        return;
+      case BITalinoErrorType.NOT_IMPLEMENTED_IOS:
+        msg = "This is not implemented for IOS devices";
         return;
       case BITalinoErrorType.CUSTOM:
         return;

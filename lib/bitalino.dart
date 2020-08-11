@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+import 'dart:io' show Platform;
 
 part 'bitalinoFrame.dart';
 part 'bitalinoState.dart';
@@ -70,6 +71,9 @@ typedef OnBITalinoDataAvailable = Function(BITalinoFrame frame);
 typedef OnConnectionLost = Function();
 
 class BITalinoController {
+  /// Address of the device.
+  String address;
+
   /// Indicates if the controller is connected to a device.
   /// Returns true if a device is connected and false if it's not.
   bool connected = false;
@@ -81,9 +85,6 @@ class BITalinoController {
   /// Indicates if the device is acquiring data.
   /// Returns true if it's acquiring and false if it's not.
   bool acquiring = false;
-
-  /// Returns the address of the connected device.
-  String connectedDevice;
 
   /// Indicates the type of bluetooth communication: [CommunicationType.BTH] or [CommunicationType.BLE].
   CommunicationType communicationType;
@@ -111,6 +112,7 @@ class BITalinoController {
     }
   }
 
+  // TODO: update
   /// Initializes the [BITalinoController].
   /// Returns [true] if the controller is initialized successfully, [false] otherwise.
   ///
@@ -124,8 +126,10 @@ class BITalinoController {
   /// Returns [BITalinoException(BITalinoErrorType.CONTROLLER_FAILED_INITIALIZE)] if the controller failed to initialize.
   /// Returns [BITalinoException(BITalinoErrorType.CONTROLLER_ALREADY_INITIALIZED)] if the controller was already initialize before.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
-  Future<void> initialize(communicationType,
+  Future<void> initialize(CommunicationType communicationType, String address,
       {OnBITalinoDataAvailable onDataAvailable}) async {
+    if (Platform.isIOS && communicationType == CommunicationType.BTH)
+      throw BITalinoException(BITalinoErrorType.NOT_IMPLEMENTED_IOS);
     if (this.communicationType == null) {
       this.communicationType = communicationType;
       if (communicationType == CommunicationType.BLE && onDataAvailable != null)
@@ -139,10 +143,12 @@ class BITalinoController {
       } on TimeoutException {
         throw BITalinoException(BITalinoErrorType.TIMEOUT);
       } catch (e) {
+        print(e.toString());
         throw BITalinoException(BITalinoErrorType.CONTROLLER_FAILED_INITIALIZE);
       }
 
       if (success) {
+        this.address = address;
         if (communicationType == CommunicationType.BTH) {
           const EventChannel bitalinoEventChannel =
               EventChannel('com.afonsoraposo.bitalino/dataStream');
@@ -173,8 +179,7 @@ class BITalinoController {
   /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_ALREADY_CONNECTED)] if a device is already connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
-  Future<bool> connect(String address,
-      {OnConnectionLost onConnectionLost}) async {
+  Future<bool> connect({OnConnectionLost onConnectionLost}) async {
     if (address == null)
       throw BITalinoException(BITalinoErrorType.ADDRESS_NULL);
     if (_connecting)
@@ -192,7 +197,6 @@ class BITalinoController {
         throw BITalinoException(BITalinoErrorType.BT_DEVICE_FAILED_CONNECT);
       }
       if (connected) {
-        connectedDevice = address;
         _onConnectionLost = onConnectionLost;
       } else {
         _connecting = false;
@@ -226,7 +230,12 @@ class BITalinoController {
   /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<String> version() async {
-    return (await _getDescription()).fwVersion;
+    if (Platform.isAndroid) {
+      return (await _getDescription()).fwVersion;
+    } else if (Platform.isIOS) {
+      return await _channel.invokeMethod("version").timeout(timeout);
+    }
+    return null;
   }
 
   /// Returns [true] if the connected device is BITalino2, [false] otherwise.
@@ -263,7 +272,6 @@ class BITalinoController {
   }
 
   void _disconnectVars() {
-    connectedDevice = null;
     connected = false;
     acquiring = false;
     this._onConnectionLost = null;
@@ -320,18 +328,23 @@ class BITalinoController {
   /// Returns [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
   /// Returns [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<bool> setBatteryThreshold(int threshold) async {
-    if (connected) {
-      try {
-        return await _channel.invokeMethod(
-            "batteryThreshold", {"threshold": threshold}).timeout(timeout);
-      } on TimeoutException {
-        throw BITalinoException(BITalinoErrorType.TIMEOUT);
-      } catch (e) {
-        throw BITalinoException(BITalinoErrorType.CUSTOM, e.toString());
+    if (Platform.isAndroid) {
+      if (connected) {
+        try {
+          return await _channel.invokeMethod(
+              "batteryThreshold", {"threshold": threshold}).timeout(timeout);
+        } on TimeoutException {
+          throw BITalinoException(BITalinoErrorType.TIMEOUT);
+        } catch (e) {
+          throw BITalinoException(BITalinoErrorType.CUSTOM, e.toString());
+        }
+      } else {
+        throw BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED);
       }
-    } else {
-      throw BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED);
+    } else if (Platform.isIOS) {
+      throw BITalinoException(BITalinoErrorType.NOT_IMPLEMENTED_IOS);
     }
+    return false;
   }
 
   /// Starts acquiring on the connected bluetooth device.
