@@ -1,6 +1,6 @@
 # BITalino
 <p>
-  <img src="https://img.shields.io/badge/version-0.0.6-blue.svg" />
+  <img src="https://img.shields.io/badge/version-1.0.1-blue.svg" />
 </p>
 
 Open source Flutter plugin that integrates the communication with BITalino devices.
@@ -19,6 +19,30 @@ This plugin uses the available native APIs available at https://bitalino.com/en/
 | Android  |     ✅     | [revolution-android-api](https://github.com/BITalinoWorld/revolution-android-api) | Jul 16, 2020 |
 |   IOS    |     ✅     |         [BITalinoBLE-iOS](https://github.com/jasminnisic/BITalinoBLE-iOS)         | Jun 22, 2016 |
 
+# Installation
+
+Add this plugin to the `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  bitalino: ^1.0.1 // add bitalino plugin
+```
+
+## Android
+Nothing specific required.
+
+## IOS
+
+On IOS, you have to add the following lines to the bottom of the `/ios/Runner/Info.plist` file:
+```plist
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>This application needs access to bluetooth to communicate with BITalino device</string>
+
+<key>NSBluetoothPeripheralUsageDescription</key>
+<string>This application needs access to BLE to communicate with BITalino device</string>
+```
 
 # Examples
 
@@ -114,7 +138,7 @@ print(state.digital);           // [List<int>]
 ### IOS
 This method is not available for IOS.
 
-### Disconnect from device
+## Disconnect from device
 ```dart
 bool success = await bitalinoController.disconnect();
 ```
@@ -129,6 +153,10 @@ bool success = await bitalinoController.dispose();
 
 You can find all the information regarding this plugin on the [API reference](https://pub.dev/documentation/bitalino/latest/) page.
 
+<br>
+
+---
+
 ## Future
 
 If you have any suggestion or problem, let me know and I'll try to improve or fix it.
@@ -136,6 +164,7 @@ Also, **feel free to contribute** to this project! :)
 
 ## Versioning
 
+- v1.0.1 - 14 August 2020
 - v1.0.0 - 14 August 2020
 - v0.0.6 - 19 July 2020
 - v0.0.5 - 19 July 2020

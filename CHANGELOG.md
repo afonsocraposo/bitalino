@@ -1,3 +1,7 @@
+## 1.0.1
+
+* Updated information.
+
 ## 1.0.0
 
 * IOS is now supported.
