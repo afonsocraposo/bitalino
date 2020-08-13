@@ -1,3 +1,7 @@
+## 1.0.0
+
+* IOS is now supported.
+
 ## 0.0.6
 
 * Android API - fixed problem with GATT server connection.

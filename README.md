@@ -8,27 +8,34 @@ Made by [Afonso Raposo](https://afonsoraposo.com).
 
 See the an example app [here](https://github.com/Afonsocraposo/buttons_tabbar/tree/master/example/example.dart).
 
-Tested with a BITalino2 device with BTH connection. BLE not working currently.
+Tested with [BITalino Core BT (MCU+BT+PWR)](https://plux.info/bitalino-components/24-bitalino-revolution-core-mcubtpwr-810121705.html) and [BITalino Core BLE/BT](https://plux.info/bitalino-components/25-bitalino-revolution-core-mcublepwr-810121706.html).
 
-### Currently supporting:
+## Currently supporting:
 
 This plugin uses the available native APIs available at https://bitalino.com/en/development/apis.
 
-|Plaftorm       |Supported| Native Repository           | Version |
-|:-------------:|:-------:|:---------------------------:|:--:|
-|Android	|   ✅    |[revolution-android-api](https://github.com/BITalinoWorld/revolution-android-api)         	| 0.0.9 |
-|IOS	    	|   ❌    | -            		| - |
+| Plaftorm | Supported |                                 Native Repository                                 |     Date     |
+| :------: | :-------: | :-------------------------------------------------------------------------------: | :----------: |
+| Android  |     ✅     | [revolution-android-api](https://github.com/BITalinoWorld/revolution-android-api) | Jul 16, 2020 |
+|   IOS    |     ✅     |         [BITalinoBLE-iOS](https://github.com/jasminnisic/BITalinoBLE-iOS)         | Jun 22, 2016 |
 
-I don't possess an IOS device nor Swift knowledge, therefore, I'm not able to implement IOS support at the moment. **Feel free to contribute!**
-You can always contact me for more details regarding this.
 
-## Examples
+# Examples
 
-### Start controller
+## Initialize controller
+
+`onDataAvailable` is called everytime the application receives data during recording.
+
+### Android
+
+On Android, the user must provide the device MAC address and can choose between BTH or BLE for communication protocols. If available, BTH is advised.
+
 ```dart
 BITalinoController bitalinoController = BITalinoController();
 try {
-  await bitalinoController.initialize(CommunicationType.BTH,
+  await bitalinoController.initialize(
+    "20:16:07:18:17:02",
+    CommunicationType.BTH,
     onDataAvailable: (BITalinoFrame frame) {
       print(frame.identifier);  // [String]
       print(frame.sequence);    // [int]
@@ -41,32 +48,60 @@ try {
 }
 ```
 
-### Connect to device
+### IOS
+
+On IOS, the user must provide the device UUID and can only use BLE regarding communication protocol.
+
+The UUID can be found with this application: [Bluetooth Smart Scanner ](https://apps.apple.com/pt/app/bluetooth-smart-scanner/id509978131).
+
+On IOS, there is no frame identifier.
+
+```dart
+BITalinoController bitalinoController = BITalinoController();
+try {
+  await bitalinoController.initialize(
+    "03A1C0AB-018F-5B39-9567-471DDE5B0322",
+    CommunicationType.BLE,
+    onDataAvailable: (BITalinoFrame frame) {
+      print(frame.sequence);    // [int]
+      print(frame.analog);      // [List<int>]
+      print(frame.digital);     // [List<int>]
+    },
+  );
+} on PlatformException catch (Exception) {
+  print("Initialization failed: ${Exception.message}");
+}
+```
+
+## Connect to device
 Connect to a device by providing its address.
-A callback can be given to be called when the connection is lost.
 ```dart
 await bitalinoController.connect(
-  "20:16:07:18:17:02",
   onConnectionLost: () {
     print("Connection lost");
   },
 )
 ```
 
-### Start acquisition
-Start acquiring analog channels: A0, A1, A2, A3, A4, and A5, with a Sampling Rate of 10Hz.
-The CommuncationType must be BTH.
+## Start acquisition
+Start acquiring analog channels: A0, A2, A4, and A5, with a Sampling Rate of 10Hz.
+
 ```dart
-bool success = await bitalinoController.start([0,1,2,3,4,5], Frequency.HZ10),);
+bool success = await bitalinoController.start(
+  [0, 2, 4, 5],
+  Frequency.HZ10),
+);
 ```
 During acquisiton, the onDataAvailable callback is called.
 
-### Stop acquisition
+## Stop acquisition
 ```dart
 bool success = await bitalinoController.stop();
 ```
 
-### Get the device state
+## Get the device state
+
+### Android
 ```dart
 BITalinoState state = await bitalinoController.state();
 print(state.identifier);        // [String]
@@ -76,16 +111,23 @@ print(state.analog);            // [List<int>]
 print(state.digital);           // [List<int>]
 ```
 
+### IOS
+This method is not available for IOS.
+
 ### Disconnect from device
 ```dart
 bool success = await bitalinoController.disconnect();
 ```
 
-### Dispose controller
+## Dispose controller
 When you're done using the controller, dispose it.
 ```dart
 bool success = await bitalinoController.dispose();
 ```
+
+## More
+
+You can find all the information regarding this plugin on the [API reference](https://pub.dev/documentation/bitalino/latest/) page.
 
 ## Future
 
@@ -94,6 +136,7 @@ Also, **feel free to contribute** to this project! :)
 
 ## Versioning
 
+- v1.0.0 - 14 August 2020
 - v0.0.6 - 19 July 2020
 - v0.0.5 - 19 July 2020
 - v0.0.4 - 19 July 2020

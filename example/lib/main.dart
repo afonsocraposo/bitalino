@@ -2,8 +2,6 @@ import 'package:bitalino_example/chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:bitalino/bitalino.dart';
 
 void main() {
