@@ -97,7 +97,7 @@ final class BITalino implements MethodChannel.MethodCallHandler {
                 }
             } else if (Constants.ACTION_DATA_AVAILABLE.equals(action)) {
                 BITalinoFrame frame = intent.getParcelableExtra(Constants.EXTRA_DATA);
-                //Log.d(TAG, "BITalinoFrame: " + frame.toString());
+                sendToDataStreamChannel(frame);
             } else if (Constants.ACTION_COMMAND_REPLY.equals(action)) {
                 String identifier = intent.getStringExtra(Constants.IDENTIFIER);
                 Parcelable parcelable = intent.getParcelableExtra(Constants.EXTRA_COMMAND_REPLY);
@@ -160,11 +160,11 @@ final class BITalino implements MethodChannel.MethodCallHandler {
                                             }
                                         }
                                     });
-                            startDataStream(dataStreamChannel);
                         } else if (type == 2) {
                             bitalinoCommunication = new BITalinoCommunicationFactory().getCommunication(
                                     communication, activity.getBaseContext());
                         }
+                        startDataStream(dataStreamChannel);
                         activity.registerReceiver(updateReceiver, updateIntentFilter());
                         result.success(true);
                     }else{
@@ -318,7 +318,7 @@ final class BITalino implements MethodChannel.MethodCallHandler {
         this.dataStreamSink = null;
     }
 
-    void sendToDataStreamChannel(BITalinoFrame frame) throws Exception {
+    void sendToDataStreamChannel(BITalinoFrame frame){
         if(dataStreamSink!=null) {
             final Map<String, Object> dataBuffer = new HashMap<>();
             dataBuffer.put("identifier", frame.getIdentifier());
@@ -331,8 +331,6 @@ final class BITalino implements MethodChannel.MethodCallHandler {
                     dataStreamSink.success(dataBuffer);
                 }
             });
-        }else{
-            throw new Exception("No channel available.");
         }
     }
 

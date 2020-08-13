@@ -1,3 +1,4 @@
+import 'package:bitalino_example/chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -18,24 +19,32 @@ class _MyAppState extends State<MyApp> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   BITalinoController bitalinoController = BITalinoController();
   int sequence = 0;
+  List<SensorValue> data = [];
+  DateTime previousTime;
+  TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
   }
 
-  Future<void> initPlatformState() async {
+  Future<void> initPlatformState(bool bth) async {
     try {
-      await bitalinoController.initialize(CommunicationType.BTH,
-          onDataAvailable: (BITalinoFrame frame) {
-        print(
-            "Sequence: ${frame.sequence}, dS: ${frame.sequence - sequence}, analog: ${frame.analog}, digital: ${frame.digital}");
-        sequence = frame.sequence;
-      });
-    } on PlatformException catch (Exception) {
-      print(Exception.message);
-      print("Initialization failed");
+      await bitalinoController.initialize(
+        controller.text,
+        bth ? CommunicationType.BTH : CommunicationType.BLE,
+        onDataAvailable: (frame) {
+          if (data.length >= 30) data.removeAt(0);
+          setState(() {
+            data.add(SensorValue(previousTime, frame.analog[0].toDouble()));
+            previousTime = DateTime.fromMillisecondsSinceEpoch(
+                previousTime.millisecondsSinceEpoch + 1000 ~/ 10);
+          });
+        },
+      );
+      _notify("Initialized: ${bth ? "BTH" : "BLE"}");
+    } catch (Exception) {
+      _notify("Initialization failed");
     }
   }
 
@@ -64,53 +73,109 @@ class _MyAppState extends State<MyApp> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            RaisedButton(
-              onPressed: () async {
-                _notify(
-                  await bitalinoController.connect(
-                    "20:16:07:18:17:02",
-                    onConnectionLost: () {
-                      _notify("Connection lost");
-                    },
+            Expanded(
+              child: ListView(
+                children: <Widget>[
+                  TextField(
+                    decoration: InputDecoration(hintText: "MAC/UUI"),
+                    textAlign: TextAlign.center,
+                    controller: controller,
                   ),
-                );
-              },
-              child: Text("Connect"),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RaisedButton(
+                          onPressed: () {
+                            initPlatformState(true);
+                          },
+                          child: Text("BTH"),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(
+                        child: RaisedButton(
+                          onPressed: () {
+                            initPlatformState(false);
+                          },
+                          child: Text("BLE"),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RaisedButton(
+                          onPressed: () async {
+                            bool connected = await bitalinoController.connect(
+                                onConnectionLost: () {
+                              _notify('Connection lost');
+                            });
+                            _notify(
+                              "Connected: $connected",
+                            );
+                          },
+                          child: Text("Connect"),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(
+                        child: RaisedButton(
+                          onPressed: () async {
+                            bool disconnected =
+                                await bitalinoController.disconnect();
+                            _notify("Disconnected: $disconnected");
+                          },
+                          child: Text("Disconnect"),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RaisedButton(
+                          onPressed: () async {
+                            previousTime = DateTime.now();
+                            bool started = await bitalinoController.start(
+                              [
+                                0,
+                              ],
+                              Frequency.HZ10,
+                              numberOfSamples: 10,
+                            );
+                            _notify("Started: $started");
+                          },
+                          child: Text("Start"),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Expanded(
+                        child: RaisedButton(
+                          onPressed: () async {
+                            bool stopped = await bitalinoController.stop();
+                            _notify("Stopped: $stopped");
+                          },
+                          child: Text("Stop"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            RaisedButton(
-              onPressed: () async {
-                _notify(await bitalinoController.version());
-              },
-              child: Text("version"),
-            ),
-            RaisedButton(
-              onPressed: () async {
-                _notify(await bitalinoController.isBitalino2());
-              },
-              child: Text("bitalino2?"),
-            ),
-            RaisedButton(
-              onPressed: () async {
-                _notify(await bitalinoController.disconnect());
-              },
-              child: Text("Disconnect"),
-            ),
-            RaisedButton(
-              onPressed: () async {
-                _notify(
-                  await bitalinoController.start([
-                    0,
-                  ], Frequency.HZ10),
-                );
-              },
-              child: Text("start"),
-            ),
-            RaisedButton(
-              onPressed: () async {
-                _notify(await bitalinoController.stop());
-              },
-              child: Text("stop"),
-            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Chart(data),
+              ),
+            )
           ],
         ),
       ),

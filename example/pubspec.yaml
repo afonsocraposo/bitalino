@@ -11,7 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  charts_flutter: ^0.9.0
+  
   bitalino:
     # When depending on this package from a real application you should use:
     #   bitalino: ^x.y.z
