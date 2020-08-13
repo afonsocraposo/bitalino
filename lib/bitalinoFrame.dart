@@ -3,7 +3,7 @@ part of 'bitalino.dart';
 /// Object that has the data received from the bluetooth device.
 class BITalinoFrame {
   BITalinoFrame._fromPlatformData(Map<dynamic, dynamic> data)
-      : identifier = data['identifier'],
+      : identifier = data['identifier'] ?? "",
         sequence = data['sequence'],
         analog = List<int>.from(data['analog']),
         digital = List<int>.from(data['digital']);
