@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'bitalino'
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = 'A Flutter plugin that integrates the communication with BITalino devices.'
   s.description      = <<-DESC
 A Flutter plugin that integrates the communication with BITalino devices.
