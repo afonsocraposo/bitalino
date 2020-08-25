@@ -15,7 +15,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  BITalinoController bitalinoController = BITalinoController();
+  BITalinoController bitalinoController;
   int sequence = 0;
   List<SensorValue> data = [];
   DateTime previousTime;
@@ -27,19 +27,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initPlatformState(bool bth) async {
+    bitalinoController = BITalinoController(
+      controller.text,
+      bth ? CommunicationType.BTH : CommunicationType.BLE,
+    );
     try {
-      await bitalinoController.initialize(
-        controller.text,
-        bth ? CommunicationType.BTH : CommunicationType.BLE,
-        onDataAvailable: (frame) {
-          if (data.length >= 30) data.removeAt(0);
-          setState(() {
-            data.add(SensorValue(previousTime, frame.analog[0].toDouble()));
-            previousTime = DateTime.fromMillisecondsSinceEpoch(
-                previousTime.millisecondsSinceEpoch + 1000 ~/ 10);
-          });
-        },
-      );
+      await bitalinoController.initialize();
       _notify("Initialized: ${bth ? "BTH" : "BLE"}");
     } catch (Exception) {
       _notify("Initialization failed");
@@ -145,6 +138,17 @@ class _MyAppState extends State<MyApp> {
                               ],
                               Frequency.HZ10,
                               numberOfSamples: 10,
+                              onDataAvailable: (frame) {
+                                if (data.length >= 30) data.removeAt(0);
+                                setState(() {
+                                  data.add(SensorValue(previousTime,
+                                      frame.analog[0].toDouble()));
+                                  previousTime =
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          previousTime.millisecondsSinceEpoch +
+                                              1000 ~/ 10);
+                                });
+                              },
                             );
                             _notify("Started: $started");
                           },

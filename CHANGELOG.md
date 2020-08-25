@@ -1,3 +1,7 @@
+## 1.1.1
+
+* Fixed README and example. 
+
 ## 1.1.0
 
 * Changed controller workflow.

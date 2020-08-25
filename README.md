@@ -1,6 +1,7 @@
+
 # BITalino
 <p>
-  <img src="https://img.shields.io/badge/version-1.1.0-blue.svg" />
+  <img src="https://img.shields.io/badge/version-1.1.1-blue.svg" />
 </p>
 
 Open source Flutter plugin that integrates the communication with BITalino devices.
@@ -27,11 +28,15 @@ Add this plugin to the `pubspec.yaml` file:
 dependencies:
   flutter:
     sdk: flutter
-  bitalino: ^1.1.0 // add bitalino plugin
+  bitalino: ^1.1.1 // add bitalino plugin
 ```
 
 ## Android
-Nothing specific required.
+On Android, you must set the `minSdkVersion` to **18** (or higher) in your `android/app/build.gradle` file.
+
+```gradle
+minSdkVersion 18
+```
 
 ## IOS
 
@@ -48,25 +53,19 @@ On IOS, you have to add the following lines to the bottom of the `/ios/Runner/In
 
 ## Initialize controller
 
-`onDataAvailable` is called everytime the application receives data during recording.
 
 ### Android
 
 On Android, the user must provide the device MAC address and can choose between BTH or BLE for communication protocols. If available, BTH is advised.
 
 ```dart
-BITalinoController bitalinoController = BITalinoController();
+BITalinoController bitalinoController = BITalinoController(
+  "20:16:07:18:17:02",
+  CommunicationType.BTH,
+);
+
 try {
-  await bitalinoController.initialize(
-    "20:16:07:18:17:02",
-    CommunicationType.BTH,
-    onDataAvailable: (BITalinoFrame frame) {
-      print(frame.identifier);  // [String]
-      print(frame.sequence);    // [int]
-      print(frame.analog);      // [List<int>]
-      print(frame.digital);     // [List<int>]
-    },
-  );
+  await bitalinoController.initialize();
 } on PlatformException catch (Exception) {
   print("Initialization failed: ${Exception.message}");
 }
@@ -81,16 +80,14 @@ The UUID can be found with this application: [Bluetooth Smart Scanner ](https://
 On IOS, there is no frame identifier.
 
 ```dart
-BITalinoController bitalinoController = BITalinoController();
+BITalinoController bitalinoController = BITalinoController(
+  "03A1C0AB-018F-5B39-9567-471DDE5B0322",
+  CommunicationType.BLE,
+);
+
 try {
   await bitalinoController.initialize(
-    "03A1C0AB-018F-5B39-9567-471DDE5B0322",
-    CommunicationType.BLE,
-    onDataAvailable: (BITalinoFrame frame) {
-      print(frame.sequence);    // [int]
-      print(frame.analog);      // [List<int>]
-      print(frame.digital);     // [List<int>]
-    },
+    
   );
 } on PlatformException catch (Exception) {
   print("Initialization failed: ${Exception.message}");
@@ -109,11 +106,17 @@ await bitalinoController.connect(
 
 ## Start acquisition
 Start acquiring analog channels: A0, A2, A4, and A5, with a Sampling Rate of 10Hz.
+`onDataAvailable` is called everytime the application receives data during recording.
 
 ```dart
 bool success = await bitalinoController.start(
   [0, 2, 4, 5],
-  Frequency.HZ10),
+  Frequency.HZ10,
+  onDataAvailable: (BITalinoFrame frame) {
+      print(frame.sequence);    // [int]
+      print(frame.analog);      // [List<int>]
+      print(frame.digital);     // [List<int>]
+    },),
 );
 ```
 During acquisiton, the onDataAvailable callback is called.
@@ -164,6 +167,8 @@ Also, **feel free to contribute** to this project! :)
 
 ## Versioning
 
+- v1.1.1 - 25 August 2020
+- v1.1.0 - 25 August 2020
 - v1.0.1 - 14 August 2020
 - v1.0.0 - 14 August 2020
 - v0.0.6 - 19 July 2020
@@ -176,3 +181,6 @@ Also, **feel free to contribute** to this project! :)
 ## License
 
 GNU General Public License v3.0, see the [LICENSE.md](https://github.com/Afonsocraposo/bitalino/tree/master/LICENSE) file for details.
+
+
+
