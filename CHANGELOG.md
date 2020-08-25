@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Changed controller workflow.
+
 ## 1.0.1
 
 * Updated information.

@@ -200,7 +200,6 @@ final class BITalino implements MethodChannel.MethodCallHandler {
             case "dispose":
                 try {
                     bitalinoCommunication.closeReceivers();
-                    bitalinoCommunication.disconnect();
                     cancelDataStreamSink();
                     result.success(true);
                 } catch (Exception e) {

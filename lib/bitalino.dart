@@ -81,6 +81,10 @@ class BITalinoController {
   /// [IOS]: BITalino UUID
   String address;
 
+  /// Indicates if the controller is initialized.
+  /// Returns true if the controller is initialized and false if it's not.
+  bool initialized = false;
+
   /// Indicates if the controller is connected to a device.
   /// Returns true if a device is connected and false if it's not.
   bool connected = false;
@@ -101,9 +105,32 @@ class BITalinoController {
   /// Callback when the connection is lost.
   OnConnectionLost _onConnectionLost;
 
+  /// Callback when data is available during recording.
+  OnBITalinoDataAvailable _onBITalinoDataAvailable;
+
   /// Controls a BITalino device.
-  BITalinoController() {
+  ///
+  /// The device MAC address (Android) or UUID (IOS), and the [CommunicationType] must be provided.
+  ///
+  /// Throws [BITalinoException(BITalinoErrorType.NOT_IMPLEMENTED_IOS)] if the [CommunicationType.BTH] is used on IOS devices.
+  /// Throws [BITalinoException(BITalinoErrorType.ADDRESS_NULL)] if the provided address is null.
+  /// Throws [BITalinoException(BITalinoErrorType.INVALID_ADDRESS)] if the provided MAC address is invalid.
+  /// Throws [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
+  BITalinoController(String address, CommunicationType communicationType) {
+    if (address == null || address.isEmpty)
+      throw BITalinoException(BITalinoErrorType.ADDRESS_NULL);
+    if (Platform.isIOS && communicationType == CommunicationType.BTH) {
+      throw BITalinoException(BITalinoErrorType.NOT_IMPLEMENTED_IOS);
+    }
+    if (Platform.isAndroid) {
+      RegExp regExp = new RegExp(r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
+      if (!regExp.hasMatch(address))
+        throw BITalinoException(BITalinoErrorType.INVALID_ADDRESS);
+    }
+
     _channel.setMethodCallHandler(this._didRecieveTranscript);
+    this.communicationType = communicationType;
+    this.address = address;
   }
 
   // handles method calls from native side
@@ -126,36 +153,13 @@ class BITalinoController {
   }
 
   /// Initializes the [BITalinoController].
-  /// Returns [true] if the controller is initialized successfully, [false] otherwise.
+  /// Throws [BITalinoErrorType.CONTROLLER_FAILED_INITIALIZE] if the controller fails to initialize.
   ///
-  /// The device MAC address (Android) or UUID (IOS), and the [CommunicationType] must be provided.
-  /// The [OnBITalinoDataAvailable] callback is called while recording everytime data is received.
-  ///
-  /// Throws [BITalinoException(BITalinoErrorType.NOT_IMPLEMENTED_IOS)] if the [CommunicationType.BTH] is used on IOS devices.
-  /// Throws [BITalinoException(BITalinoErrorType.ADDRESS_NULL)] if the provided address is null.
-  /// Throws [BITalinoException(BITalinoErrorType.INVALID_ADDRESS)] if the provided MAC address is invalid.
-  /// Throws [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
   /// Throws [BITalinoException(BITalinoErrorType.CONTROLLER_FAILED_INITIALIZE)] if the controller failed to initialize.
   /// Throws [BITalinoException(BITalinoErrorType.CONTROLLER_ALREADY_INITIALIZED)] if the controller was already initialize before.
   /// Throws [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
-  Future<void> initialize(String address, CommunicationType communicationType,
-      {OnBITalinoDataAvailable onDataAvailable}) async {
-    if (address == null || address.isEmpty)
-      throw BITalinoException(BITalinoErrorType.ADDRESS_NULL);
-    if (Platform.isIOS && communicationType == CommunicationType.BTH) {
-      throw BITalinoException(BITalinoErrorType.NOT_IMPLEMENTED_IOS);
-    }
-    if (Platform.isAndroid) {
-      RegExp regExp = new RegExp(r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
-      if (!regExp.hasMatch(address))
-        throw BITalinoException(BITalinoErrorType.INVALID_ADDRESS);
-    }
-
-    if (this.communicationType != null)
-      throw BITalinoException(BITalinoErrorType.CONTROLLER_ALREADY_INITIALIZED);
-
+  Future<void> initialize() async {
     bool initialized;
-    this.communicationType = communicationType;
     try {
       if (Platform.isAndroid) {
         initialized = await _channel.invokeMethod(
@@ -175,13 +179,16 @@ class BITalinoController {
 
     if (!initialized)
       throw BITalinoException(BITalinoErrorType.CONTROLLER_FAILED_INITIALIZE);
-    this.address = address;
+
+    this.initialized = true;
     const EventChannel bitalinoEventChannel =
         EventChannel('com.afonsoraposo.bitalino/dataStream');
     _dataStreamSubscription =
         bitalinoEventChannel.receiveBroadcastStream().listen(
       (dynamic bitalinoData) {
-        onDataAvailable(BITalinoFrame._fromPlatformData(bitalinoData));
+        if (_onBITalinoDataAvailable != null)
+          _onBITalinoDataAvailable(
+              BITalinoFrame._fromPlatformData(bitalinoData));
       },
     );
   }
@@ -288,6 +295,8 @@ class BITalinoController {
   Future<bool> disconnect() async {
     if (!connected)
       throw BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED);
+
+    if (recording) await stop();
     try {
       bool disconnected =
           await _channel.invokeMethod("disconnect").timeout(timeout);
@@ -306,11 +315,24 @@ class BITalinoController {
   /// Throws [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
   /// Throws [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<bool> dispose() async {
+    try {
+      if (recording) await stop();
+    } catch (e) {
+      print(e.toString());
+    }
+    if (connected) await disconnect();
     _dataStreamSubscription?.cancel();
     communicationType = null;
+    _channel.setMethodCallHandler(null);
     _disconnectVars();
     try {
-      return await _channel.invokeMethod("dispose").timeout(timeout);
+      bool disposed;
+      if (Platform.isAndroid)
+        disposed = await _channel.invokeMethod("dispose").timeout(timeout);
+      else
+        disposed = true;
+      if (disposed) this.initialized = false;
+      return disposed;
     } on TimeoutException {
       throw BITalinoException(BITalinoErrorType.TIMEOUT);
     } catch (e) {
@@ -378,8 +400,9 @@ class BITalinoController {
   /// Starts recording on the connected bluetooth device.
   /// Returns [true] if the acquisition started successfully, [false] otherwise.
   ///
-  /// analogChannels is a [List<int>] of the active analog channels.
-  /// While recording, the [OnBITalinoDataAvailable] callback defined on [initialize] is called.
+  /// [analogChannels] is a [List<int>] of the active analog channels.
+  /// While recording, the [OnBITalinoDataAvailable] callback is called.
+  /// On IOS, the [numberOfSamples] per chunk of data received must be provided.
   ///
   /// Throws [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
   /// Throws [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
@@ -387,7 +410,8 @@ class BITalinoController {
   /// Throws [BITalinoException(BITalinoErrorType.BT_DEVICE_ALREADY_RECORDING)] if the connected bluetooth device is already recording.
   /// Throws [BITalinoException(BITalinoErrorType.BT_DEVICE_BTH)] if [CommunicationType.BTH] is not selected.
   Future<bool> start(List<int> analogChannels, Frequency sampleRate,
-      {int numberOfSamples}) async {
+      {int numberOfSamples = 50,
+      OnBITalinoDataAvailable onDataAvailable}) async {
     if (Platform.isIOS && (numberOfSamples == null || numberOfSamples <= 0))
       throw BITalinoException(BITalinoErrorType.MISSING_PARAMETER);
     if (!connected)
@@ -395,6 +419,7 @@ class BITalinoController {
     if (recording)
       throw BITalinoException(BITalinoErrorType.BT_DEVICE_ALREADY_RECORDING);
 
+    _onBITalinoDataAvailable = onDataAvailable;
     try {
       if (Platform.isAndroid) {
         recording = await _channel.invokeMethod("start", <String, dynamic>{
@@ -432,6 +457,7 @@ class BITalinoController {
     try {
       bool stopped = await _channel.invokeMethod("stop").timeout(timeout);
       recording = !stopped;
+      if (stopped) _onBITalinoDataAvailable = null;
       return stopped;
     } on TimeoutException {
       throw BITalinoException(BITalinoErrorType.TIMEOUT);

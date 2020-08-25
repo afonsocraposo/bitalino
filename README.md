@@ -1,6 +1,6 @@
 # BITalino
 <p>
-  <img src="https://img.shields.io/badge/version-1.0.1-blue.svg" />
+  <img src="https://img.shields.io/badge/version-1.1.0-blue.svg" />
 </p>
 
 Open source Flutter plugin that integrates the communication with BITalino devices.
@@ -27,7 +27,7 @@ Add this plugin to the `pubspec.yaml` file:
 dependencies:
   flutter:
     sdk: flutter
-  bitalino: ^1.0.1 // add bitalino plugin
+  bitalino: ^1.1.0 // add bitalino plugin
 ```
 
 ## Android
@@ -176,5 +176,3 @@ Also, **feel free to contribute** to this project! :)
 ## License
 
 GNU General Public License v3.0, see the [LICENSE.md](https://github.com/Afonsocraposo/bitalino/tree/master/LICENSE) file for details.
-
-
