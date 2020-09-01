@@ -1,4 +1,3 @@
-
 # BITalino
 <p>
   <img src="https://img.shields.io/badge/version-1.1.1-blue.svg" />
@@ -10,6 +9,8 @@ Made by [Afonso Raposo](https://afonsoraposo.com).
 See the an example app [here](https://github.com/Afonsocraposo/buttons_tabbar/tree/master/example/example.dart).
 
 Tested with [BITalino Core BT (MCU+BT+PWR)](https://plux.info/bitalino-components/24-bitalino-revolution-core-mcubtpwr-810121705.html) and [BITalino Core BLE/BT](https://plux.info/bitalino-components/25-bitalino-revolution-core-mcublepwr-810121706.html).
+
+![Work flow scheme](https://raw.githubusercontent.com/Afonsocraposo/bitalino/master/doc/images/work-flow.png)
 
 ## Currently supporting:
 
@@ -181,6 +182,7 @@ Also, **feel free to contribute** to this project! :)
 ## License
 
 GNU General Public License v3.0, see the [LICENSE.md](https://github.com/Afonsocraposo/bitalino/tree/master/LICENSE) file for details.
+
 
 
 
