@@ -1,3 +1,7 @@
+## 1.1.1+1
+
+* Added work flow scheme image to README
+
 ## 1.1.1
 
 * Fixed README and example. 

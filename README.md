@@ -166,19 +166,6 @@ You can find all the information regarding this plugin on the [API reference](ht
 If you have any suggestion or problem, let me know and I'll try to improve or fix it.
 Also, **feel free to contribute** to this project! :)
 
-## Versioning
-
-- v1.1.1 - 25 August 2020
-- v1.1.0 - 25 August 2020
-- v1.0.1 - 14 August 2020
-- v1.0.0 - 14 August 2020
-- v0.0.6 - 19 July 2020
-- v0.0.5 - 19 July 2020
-- v0.0.4 - 19 July 2020
-- v0.0.3 - 18 July 2020
-- v0.0.2 - 18 July 2020
-- v0.0.1 - 18 July 2020
-
 ## License
 
 GNU General Public License v3.0, see the [LICENSE.md](https://github.com/Afonsocraposo/bitalino/tree/master/LICENSE) file for details.
