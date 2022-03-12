@@ -79,7 +79,7 @@ class BITalinoController {
   /// Address of the device.
   /// [Android]: MAC address
   /// [IOS]: BITalino UUID
-  String address;
+  late String address;
 
   /// Indicates if the controller is initialized.
   /// Returns true if the controller is initialized and false if it's not.
@@ -98,15 +98,15 @@ class BITalinoController {
   bool recording = false;
 
   /// Indicates the type of bluetooth communication: [CommunicationType.BTH] or [CommunicationType.BLE].
-  CommunicationType communicationType;
+  late CommunicationType communicationType;
 
-  StreamSubscription<dynamic> _dataStreamSubscription;
+  StreamSubscription<dynamic>? _dataStreamSubscription;
 
   /// Callback when the connection is lost.
-  OnConnectionLost _onConnectionLost;
+  OnConnectionLost? _onConnectionLost;
 
   /// Callback when data is available during recording.
-  OnBITalinoDataAvailable _onBITalinoDataAvailable;
+  OnBITalinoDataAvailable? _onBITalinoDataAvailable;
 
   /// Controls a BITalino device.
   ///
@@ -117,7 +117,7 @@ class BITalinoController {
   /// Throws [BITalinoException(BITalinoErrorType.INVALID_ADDRESS)] if the provided MAC address is invalid.
   /// Throws [BITalinoException(BITalinoErrorType.TIMEOUT)] if the timeout limit is reached.
   BITalinoController(String address, CommunicationType communicationType) {
-    if (address == null || address.isEmpty)
+    if (address.isEmpty)
       throw BITalinoException(BITalinoErrorType.ADDRESS_NULL);
     if (Platform.isIOS && communicationType == CommunicationType.BTH) {
       throw BITalinoException(BITalinoErrorType.NOT_IMPLEMENTED_IOS);
@@ -137,7 +137,7 @@ class BITalinoController {
   Future<void> _didRecieveTranscript(MethodCall call) async {
     switch (call.method) {
       case "lostConnection":
-        if (_onConnectionLost != null) _onConnectionLost();
+        _onConnectionLost?.call();
         _disconnectVars();
         return;
       default:
@@ -159,16 +159,16 @@ class BITalinoController {
   /// Throws [BITalinoException(BITalinoErrorType.CONTROLLER_ALREADY_INITIALIZED)] if the controller was already initialize before.
   /// Throws [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
   Future<void> initialize() async {
-    bool initialized;
+    late bool initialized;
     try {
       if (Platform.isAndroid) {
-        initialized = await _channel.invokeMethod(
+        initialized = await (_channel.invokeMethod(
             "initialize", <String, dynamic>{
           "type": serializeCommunicationType(communicationType)
-        }).timeout(timeout);
+        }).timeout(timeout) as FutureOr<bool>);
       } else if (Platform.isIOS) {
-        initialized = await _channel.invokeMethod("initialize",
-            <String, dynamic>{"address": address}).timeout(timeout);
+        initialized = await (_channel.invokeMethod("initialize",
+            <String, dynamic>{"address": address}).timeout(timeout) as FutureOr<bool>);
       }
     } on TimeoutException {
       throw BITalinoException(BITalinoErrorType.TIMEOUT);
@@ -187,7 +187,7 @@ class BITalinoController {
         bitalinoEventChannel.receiveBroadcastStream().listen(
       (dynamic bitalinoData) {
         if (_onBITalinoDataAvailable != null)
-          _onBITalinoDataAvailable(
+          _onBITalinoDataAvailable!(
               BITalinoFrame._fromPlatformData(bitalinoData));
       },
     );
@@ -205,7 +205,7 @@ class BITalinoController {
   /// Throws [BITalinoException(BITalinoErrorType.BT_DEVICE_ALREADY_CONNECTED)] if a device is already connected.
   /// Throws [BITalinoException(BITalinoErrorType.BT_DEVICE_FAILED_CONNECT)] if the device fails to connect.
   /// Throws [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
-  Future<bool> connect({OnConnectionLost onConnectionLost}) async {
+  Future<bool> connect({OnConnectionLost? onConnectionLost}) async {
     if (_connecting)
       throw BITalinoException(BITalinoErrorType.ALREADY_CONNECTING);
     if (connected)
@@ -214,10 +214,10 @@ class BITalinoController {
     try {
       _connecting = true;
       if (Platform.isAndroid) {
-        connected = await _channel.invokeMethod(
-            "connect", <String, dynamic>{"address": address}).timeout(timeout);
+        connected = await (_channel.invokeMethod(
+            "connect", <String, dynamic>{"address": address}).timeout(timeout) as FutureOr<bool>);
       } else if (Platform.isIOS) {
-        connected = await _channel.invokeMethod("connect").timeout(timeout);
+        connected = await (_channel.invokeMethod("connect").timeout(timeout) as FutureOr<bool>);
       }
     } on TimeoutException {
       _connecting = false;
@@ -241,7 +241,7 @@ class BITalinoController {
 
     try {
       return BITalinoDescription._fromPlatformData(
-          await _channel.invokeMethod("description").timeout(timeout));
+          await (_channel.invokeMethod("description").timeout(timeout) as FutureOr<Map<dynamic, dynamic>>));
     } on TimeoutException {
       throw BITalinoException(BITalinoErrorType.TIMEOUT);
     } catch (e) {
@@ -255,7 +255,7 @@ class BITalinoController {
   /// Throws [BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED)] if a device is not connected.
   /// Throws [BITalinoException(BITalinoErrorType.BT_DEVICE_CANNOT_BE_RECORDING)] if the device is recording.
   /// Throws [BITalinoException(BITalinoErrorType.CUSTOM)] if a native exception was raised.
-  Future<String> version() async {
+  Future<String?> version() async {
     if (!connected)
       throw BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED);
     if (recording)
@@ -264,7 +264,7 @@ class BITalinoController {
     if (Platform.isAndroid)
       return (await _getDescription()).fwVersion;
     else if (Platform.isIOS)
-      return await _channel.invokeMethod("version").timeout(timeout);
+      return await (_channel.invokeMethod("version").timeout(timeout) as FutureOr<String?>);
     return null;
   }
 
@@ -283,7 +283,7 @@ class BITalinoController {
     if (recording)
       throw BITalinoException(BITalinoErrorType.BT_DEVICE_CANNOT_BE_RECORDING);
     else if (Platform.isAndroid) return (await _getDescription()).isBitalino2;
-    return null;
+    return false;
   }
 
   /// Disconnects the controller from the connected device.
@@ -299,7 +299,7 @@ class BITalinoController {
     if (recording) await stop();
     try {
       bool disconnected =
-          await _channel.invokeMethod("disconnect").timeout(timeout);
+          await (_channel.invokeMethod("disconnect").timeout(timeout) as FutureOr<bool>);
       if (disconnected) _disconnectVars();
       return disconnected;
     } on TimeoutException {
@@ -322,13 +322,12 @@ class BITalinoController {
     }
     if (connected) await disconnect();
     _dataStreamSubscription?.cancel();
-    communicationType = null;
     _channel.setMethodCallHandler(null);
     _disconnectVars();
     try {
       bool disposed;
       if (Platform.isAndroid)
-        disposed = await _channel.invokeMethod("dispose").timeout(timeout);
+        disposed = await (_channel.invokeMethod("dispose").timeout(timeout) as FutureOr<bool>);
       else
         disposed = true;
       if (disposed) this.initialized = false;
@@ -363,7 +362,7 @@ class BITalinoController {
 
     try {
       return BITalinoState._fromPlatformData(
-          await _channel.invokeMethod("state").timeout(timeout));
+          await (_channel.invokeMethod("state").timeout(timeout) as FutureOr<Map<dynamic, dynamic>>));
     } on TimeoutException {
       throw BITalinoException(BITalinoErrorType.TIMEOUT);
     } catch (e) {
@@ -388,8 +387,8 @@ class BITalinoController {
       throw BITalinoException(BITalinoErrorType.BT_DEVICE_CANNOT_BE_RECORDING);
 
     try {
-      return await _channel.invokeMethod("batteryThreshold",
-          <String, dynamic>{"threshold": threshold}).timeout(timeout);
+      return await (_channel.invokeMethod("batteryThreshold",
+          <String, dynamic>{"threshold": threshold}).timeout(timeout) as FutureOr<bool>);
     } on TimeoutException {
       throw BITalinoException(BITalinoErrorType.TIMEOUT);
     } catch (e) {
@@ -411,7 +410,7 @@ class BITalinoController {
   /// Throws [BITalinoException(BITalinoErrorType.BT_DEVICE_BTH)] if [CommunicationType.BTH] is not selected.
   Future<bool> start(List<int> analogChannels, Frequency sampleRate,
       {int numberOfSamples = 50,
-      OnBITalinoDataAvailable onDataAvailable}) async {
+      OnBITalinoDataAvailable? onDataAvailable}) async {
     if (Platform.isIOS && (numberOfSamples == null || numberOfSamples <= 0))
       throw BITalinoException(BITalinoErrorType.MISSING_PARAMETER);
     if (!connected)
@@ -422,16 +421,16 @@ class BITalinoController {
     _onBITalinoDataAvailable = onDataAvailable;
     try {
       if (Platform.isAndroid) {
-        recording = await _channel.invokeMethod("start", <String, dynamic>{
+        recording = await (_channel.invokeMethod("start", <String, dynamic>{
           "analogChannels": serializeChannels(analogChannels),
           "sampleRate": serializeFrequency(sampleRate),
-        }).timeout(timeout);
+        }).timeout(timeout) as FutureOr<bool>);
       } else if (Platform.isIOS) {
-        recording = await _channel.invokeMethod("start", <String, dynamic>{
+        recording = await (_channel.invokeMethod("start", <String, dynamic>{
           "analogChannels": serializeChannels(analogChannels),
           "sampleRate": serializeFrequency(sampleRate),
           "numberOfSamples": numberOfSamples,
-        }).timeout(timeout);
+        }).timeout(timeout) as FutureOr<bool>);
       }
       return recording;
     } on TimeoutException {
@@ -455,7 +454,7 @@ class BITalinoController {
       throw BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_RECORDING);
 
     try {
-      bool stopped = await _channel.invokeMethod("stop").timeout(timeout);
+      bool stopped = await (_channel.invokeMethod("stop").timeout(timeout) as FutureOr<bool>);
       recording = !stopped;
       if (stopped) _onBITalinoDataAvailable = null;
       return stopped;
@@ -490,9 +489,9 @@ class BITalinoController {
       throw BITalinoException(BITalinoErrorType.BT_DEVICE_CANNOT_BE_RECORDING);
 
     try {
-      return await _channel.invokeMethod("trigger", <String, dynamic>{
+      return await (_channel.invokeMethod("trigger", <String, dynamic>{
         "digitalChannels": serializeChannels(digitalChannels),
-      }).timeout(timeout);
+      }).timeout(timeout) as FutureOr<bool>);
     } on TimeoutException {
       throw BITalinoException(BITalinoErrorType.TIMEOUT);
     } catch (e) {
@@ -520,9 +519,9 @@ class BITalinoController {
       throw BITalinoException(BITalinoErrorType.BT_DEVICE_CANNOT_BE_RECORDING);
 
     try {
-      return await _channel.invokeMethod("pwm", <String, dynamic>{
+      return await (_channel.invokeMethod("pwm", <String, dynamic>{
         "pwmOutput": pwmOutput,
-      }).timeout(timeout);
+      }).timeout(timeout) as FutureOr<bool>);
     } on TimeoutException {
       throw BITalinoException(BITalinoErrorType.TIMEOUT);
     } catch (e) {
