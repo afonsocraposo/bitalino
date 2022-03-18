@@ -28,8 +28,8 @@ enum BITalinoErrorType {
 }
 
 class BITalinoException implements Exception {
-  String msg;
-  final BITalinoErrorType type;
+  String? msg;
+  final BITalinoErrorType? type;
 
   BITalinoException([this.type, this.msg]) {
     switch (type) {
