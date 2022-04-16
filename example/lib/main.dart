@@ -33,7 +33,6 @@ class _MyAppState extends State<MyApp> {
     );
     try {
       await bitalinoController.initialize();
-      await bitalinoController.dispose();
       _notify("Initialized: ${bth ? "BTH" : "BLE"}");
     } catch (Exception) {
       _notify("Initialization failed");
