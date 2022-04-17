@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
                   Row(
                     children: [
                       Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             initPlatformState(true);
                           },
@@ -86,7 +86,7 @@ class _MyAppState extends State<MyApp> {
                         width: 16,
                       ),
                       Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             initPlatformState(false);
                           },
@@ -98,7 +98,7 @@ class _MyAppState extends State<MyApp> {
                   Row(
                     children: [
                       Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () async {
                             bool connected = await bitalinoController.connect(
                                 onConnectionLost: () {
@@ -115,7 +115,7 @@ class _MyAppState extends State<MyApp> {
                         width: 16,
                       ),
                       Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () async {
                             bool disconnected =
                                 await bitalinoController.disconnect();
@@ -129,7 +129,7 @@ class _MyAppState extends State<MyApp> {
                   Row(
                     children: [
                       Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () async {
                             previousTime = DateTime.now();
                             bool started = await bitalinoController.start(
@@ -159,7 +159,7 @@ class _MyAppState extends State<MyApp> {
                         width: 16,
                       ),
                       Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () async {
                             bool stopped = await bitalinoController.stop();
                             _notify("Stopped: $stopped");
