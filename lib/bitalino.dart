@@ -128,13 +128,13 @@ class BITalinoController {
         throw BITalinoException(BITalinoErrorType.INVALID_ADDRESS);
     }
 
-    _channel.setMethodCallHandler(this._didRecieveTranscript);
+    _channel.setMethodCallHandler(this._didReceiveTranscript);
     this.communicationType = communicationType;
     this.address = address;
   }
 
   // handles method calls from native side
-  Future<void> _didRecieveTranscript(MethodCall call) async {
+  Future<void> _didReceiveTranscript(MethodCall call) async {
     switch (call.method) {
       case "lostConnection":
         _onConnectionLost?.call();
@@ -145,7 +145,7 @@ class BITalinoController {
     }
   }
 
-  // resets variables when the device is disconencted
+  // resets variables when the device is disconnected
   void _disconnectVars() {
     connected = false;
     recording = false;
