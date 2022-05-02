@@ -1,8 +1,11 @@
 .DS_Store
 .dart_tool/
 .settings/
+.idea/
 
 .packages
 .pub/
 
 build/
+
+local.properties
