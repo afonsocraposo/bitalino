@@ -1,5 +1,4 @@
 import 'package:bitalino_example/chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:bitalino/bitalino.dart';
@@ -34,13 +33,13 @@ class _MyAppState extends State<MyApp> {
     try {
       await bitalinoController.initialize();
       _notify("Initialized: ${bth ? "BTH" : "BLE"}");
-    } catch (Exception) {
+    } catch (e) {
       _notify("Initialization failed");
     }
   }
 
   _notify(dynamic text) {
-    _scaffoldKey.currentState.showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           text.toString(),
