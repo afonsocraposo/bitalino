@@ -1,3 +1,11 @@
+## 2.0.1
+
+* Fixed bug Targeting S+ (version 31 and above)
+
+## 2.0.0
+
+* Upgraded to null safety
+
 ## 1.1.1+1
 
 * Added work flow scheme image to README
