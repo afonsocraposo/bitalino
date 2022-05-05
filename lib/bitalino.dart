@@ -51,7 +51,7 @@ int serializeCommunicationType(CommunicationType communicationType) {
     //case CommunicationType.DUAL:
     //return 3;
   }
-  throw ArgumentError('Unknown CommunicationType');
+  // throw ArgumentError('Unknown CommunicationType');
 }
 
 int serializeFrequency(Frequency frequency) {
@@ -65,7 +65,7 @@ int serializeFrequency(Frequency frequency) {
     case Frequency.HZ1000:
       return 1000;
   }
-  throw ArgumentError('Unknown Frequency value');
+  // throw ArgumentError('Unknown Frequency value');
 }
 
 Uint32List serializeChannels(List<int> analogChannels) {
@@ -128,13 +128,13 @@ class BITalinoController {
         throw BITalinoException(BITalinoErrorType.INVALID_ADDRESS);
     }
 
-    _channel.setMethodCallHandler(this._didRecieveTranscript);
+    _channel.setMethodCallHandler(this._didReceiveTranscript);
     this.communicationType = communicationType;
     this.address = address;
   }
 
   // handles method calls from native side
-  Future<void> _didRecieveTranscript(MethodCall call) async {
+  Future<void> _didReceiveTranscript(MethodCall call) async {
     switch (call.method) {
       case "lostConnection":
         _onConnectionLost?.call();
@@ -145,7 +145,7 @@ class BITalinoController {
     }
   }
 
-  // resets variables when the device is disconencted
+  // resets variables when the device is disconnected
   void _disconnectVars() {
     connected = false;
     recording = false;
@@ -415,7 +415,7 @@ class BITalinoController {
   Future<bool> start(List<int> analogChannels, Frequency sampleRate,
       {int numberOfSamples = 50,
       OnBITalinoDataAvailable? onDataAvailable}) async {
-    if (Platform.isIOS && (numberOfSamples == null || numberOfSamples <= 0))
+    if (Platform.isIOS && numberOfSamples <= 0)
       throw BITalinoException(BITalinoErrorType.MISSING_PARAMETER);
     if (!connected)
       throw BITalinoException(BITalinoErrorType.BT_DEVICE_NOT_CONNECTED);

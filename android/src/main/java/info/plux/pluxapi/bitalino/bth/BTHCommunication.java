@@ -878,7 +878,7 @@ public class BTHCommunication extends BITalinoCommunication {
         Intent alarmIntent = new Intent(ALARM);
         alarmIntent.putExtra(ALARM_ID, DATA_STREAM_ALARM);
         alarmIntent.putExtra(ALARM_DEVICE_ID, mBluetoothDeviceAddress);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, DATA_STREAM_ALARM, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, DATA_STREAM_ALARM, alarmIntent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         AlarmManager alarmManager = (AlarmManager) activityContext.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + WAIT_TIME_2SECONDS, pendingIntent);
     }

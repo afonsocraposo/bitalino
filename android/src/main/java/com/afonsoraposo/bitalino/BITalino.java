@@ -7,15 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
 
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 
 import info.plux.pluxapi.Communication;
 import info.plux.pluxapi.Constants;
