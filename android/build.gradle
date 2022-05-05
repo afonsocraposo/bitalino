@@ -25,7 +25,7 @@ android {
     compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion 18
+        minSdkVersion 23
         multiDexEnabled true
     }
     lintOptions {
