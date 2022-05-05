@@ -1,6 +1,14 @@
+## Important
+
+I stopped working in this plugin. I'm currently working in the development of a new biosignals acquisition device named "ScientISST". Learn more about it here:
+
+https://scientisst.com
+
+---
+
 # BITalino
 <p>
-  <img src="https://img.shields.io/badge/version-1.1.1-blue.svg" />
+  <img src="https://img.shields.io/badge/version-2.0.1-blue.svg" />
 </p>
 
 Open source Flutter plugin that integrates the communication with BITalino devices.
